@@ -1,0 +1,39 @@
+{
+  "name": "sisbodeveloper",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0 <23"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "test:hooks": "bash .claude/hooks/test-guard.sh",
+    "test:sensitive-data": "bash .github/scripts/test-verifica-dados-sensiveis.sh",
+    "check:types": "ALLOW_PLACEHOLDER_TEXT=1 astro check --minimumFailingSeverity hint",
+    "build:verify": "ALLOW_PLACEHOLDER_TEXT=1 astro build",
+    "check:sensitive-data": "bash .github/scripts/verifica-dados-sensiveis.sh",
+    "lint": "node --test 'tests/lint/*.test.mjs'",
+    "test": "node --test 'tests/*.test.mjs'",
+    "verify": "npm run test:hooks && npm run test:sensitive-data && npm run check:types && npm run lint && npm run build:verify && npm run check:sensitive-data && npm test"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "8.0.2",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.3.4",
+    "tailwindcss": "4.3.3"
+  },
+  "allowScripts": {
+    "esbuild": true
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@astrojs/compiler-rs": "0.4.1",
+    "@types/node": "22.20.5",
+    "html-validate": "11.16.2",
+    "parse5": "8.0.1",
+    "typescript": "6.0.3"
+  }
+}
