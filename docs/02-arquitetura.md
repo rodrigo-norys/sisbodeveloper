@@ -15,7 +15,7 @@ Aquilo que o desenho **não escolhe** — recebe pronto e precisa acomodar.
 | # | Restrição | De onde vem | Negociável? | Como se confere | Antes do início |
 |---|---|---|---|---|---|
 | `RS-01` | O domínio é `sisbodeveloper.com.br`, com DNS na Cloudflare, em nome do dono; o registro, a conta da Cloudflare e o repositório no GitHub ficam em nome dele, sem acesso de outra pessoa | registro do domínio; decisão do dono, 13-10-2026 (`Q-09`) | não | os servidores de nome do domínio são da Cloudflare | não: só na publicação (`REQ-23`) |
-| `RS-02` | O design e a estrutura do site atual se mantêm: paleta, tipografia, casca, bento, régua e rotas | decisão do dono, 26-09-2026 (`P-08`) | sim, com o dono, por proposta com artefato visual | comparação com o site no commit `84e2d74` | não |
+| `RS-02` | O design e a estrutura do site atual se mantêm: paleta, tipografia, casca, bento, régua e rotas | decisão do dono, 26-09-2026 (`P-08`) | sim, com o dono, por proposta com artefato visual | comparação com o site no commit `e50e9e4` | não |
 | `RS-03` | Uma pessoa escreve, mantém e publica o site | decisão do dono, 13-10-2026 (`Q-09`) | não | — | não |
 | `RS-04` | Os textos, as medidas com fonte, método e n, o currículo e a foto vêm do dono; a execução não os produz | `P-01`, `P-02` | não | cada tarefa de conteúdo cita o insumo recebido | não: a tarefa que depende fica bloqueada até o insumo chegar, e a execução segue pelas outras (`P-09`) |
 | `RS-05` | O código do CronosComex é lido só pelo repositório público, e os números dele só vêm do dono | decisão do dono, 26-09-2026 | não | — | não |
