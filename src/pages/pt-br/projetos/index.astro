@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import ProjectGrid from '../../../components/ProjectGrid.astro'
+import PageHeading from '../../../components/PageHeading.astro'
+import { useTranslations } from '../../../i18n/ui'
+import { listEntries } from '../../../lib/content'
+
+const locale = 'pt-br' as const
+const translate = useTranslations(locale)
+const entries = await listEntries('projects', locale)
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${translate('projects.title')} — Rodrigo Norys`}
+  description={translate('projects.lead')}
+  alternateHref="/en/projects/"
+>
+  <PageHeading title={translate('projects.title')} lead={translate('projects.lead')} />
+  <ProjectGrid locale={locale} entries={entries} emptyMessage={translate('projects.empty')} headingLevel="h2" />
+</BaseLayout>

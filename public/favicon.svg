@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Rodrigo Norys">
+  <!-- Favicon e documento isolado: nao ha :root da pagina para herdar, entao os
+       valores sao literais. Sao os mesmos tokens convertidos de oklch para sRGB
+       pelas matrizes do Oklab: paper #f9f6f2 / #15110c, ink #1f1915 / #e7e4df,
+       accent #8b3722 / #df8c6f. -->
+  <style>
+    .paper { fill: #f9f6f2 }
+    .ink { fill: #1f1915 }
+    .accent { fill: #8b3722 }
+    @media (prefers-color-scheme: dark) {
+      .paper { fill: #15110c }
+      .ink { fill: #e7e4df }
+      .accent { fill: #df8c6f }
+    }
+  </style>
+  <rect width="32" height="32" rx="4" class="ink" />
+  <rect x="7" y="5" width="18" height="22" rx="1" class="paper" />
+  <rect x="7" y="5" width="3" height="22" class="accent" />
+  <rect x="13" y="11" width="9" height="1.75" class="ink" />
+  <rect x="13" y="15.5" width="9" height="1.75" class="ink" />
+  <rect x="13" y="20" width="5.5" height="1.75" class="ink" />
+</svg>

@@ -1,0 +1,71 @@
+---
+/**
+ * O card da grade de seis colunas. `large` ocupa metade da linha, `small` um
+ * terco, `wide` a linha inteira — as mesmas proporcoes da pagina de origem.
+ *
+ * Com `href`, o titulo vira o link e um pseudo-elemento o estica sobre o card
+ * inteiro: um alvo so para o leitor de tela, e o card todo clicavel para o
+ * mouse. O link de canto fica acima dele (`z-index`) e continua independente.
+ */
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+import Icon, { type IconName } from './Icon.astro'
+
+interface Props {
+  title: string
+  size?: 'large' | 'small' | 'wide'
+  href?: string
+  kicker?: string
+  description?: string
+  icon?: IconName
+  corner?: { href: string; label: string; icon: IconName }
+  image?: ImageMetadata
+  imageAlt?: string
+  headingLevel?: 'h2' | 'h3'
+  class?: string
+}
+
+const {
+  title,
+  size = 'small',
+  href,
+  kicker,
+  description,
+  icon,
+  corner,
+  image,
+  imageAlt = '',
+  headingLevel: Heading = 'h3',
+  class: className = '',
+} = Astro.props
+---
+
+<article class={`card card-${size} ${className}`}>
+  {corner && (
+    <a href={corner.href} class="card-corner" aria-label={corner.label} rel="noopener">
+      <Icon name={corner.icon} />
+    </a>
+  )}
+
+  {icon && <Icon name={icon} size={32} class="mb-5 text-muted" />}
+  {kicker && <p class="kicker mb-3 pr-8">{kicker}</p>}
+
+  <Heading class="pr-8 text-xl font-semibold leading-snug tracking-tight">
+    {href ? <a href={href} class="card-link">{title}</a> : title}
+  </Heading>
+
+  {description && <p class="mt-3 leading-relaxed text-muted">{description}</p>}
+
+  <slot />
+
+  {image && (
+    <div class="card-media">
+      <Image
+        src={image}
+        alt={imageAlt}
+        widths={[480, 800, 1200]}
+        sizes={size === 'small' ? '(max-width: 48rem) 100vw, 33vw' : '(max-width: 48rem) 100vw, 50vw'}
+      />
+    </div>
+  )}
+</article>

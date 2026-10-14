@@ -1,0 +1,222 @@
+---
+/**
+ * A pagina que expoe o sistema do proprio site.
+ *
+ * Ela existe por um motivo de posicionamento, nao de vaidade: e o unico artefato
+ * de um portfolio que quem avalia consegue verificar no mesmo clique. Por isso a
+ * regra e dura — todo numero aqui e COMPUTADO no build, lendo o CSS que o
+ * navegador consome e os arquivos que ele baixa. A unica excecao e a metrica
+ * interna da fonte, que o woff2 comprimido nao permite ler, e que por isso vem
+ * versionada com origem e data declaradas na propria pagina.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PageHeading from './PageHeading.astro'
+import { type Locale, useTranslations, formatDate } from '../i18n/ui'
+import { readTokens, measureContrasts, readFontFiles } from '../lib/design-system'
+import fontMetrics from '../design/font-metrics.json'
+
+interface Props {
+  locale: Locale
+  alternateHref: string
+}
+
+const { locale, alternateHref } = Astro.props
+const translate = useTranslations(locale)
+
+const tokens = readTokens()
+const contrastPairs = measureContrasts(tokens)
+const fontFiles = readFontFiles()
+const totalBytes = fontFiles.reduce((total, fontFile) => total + fontFile.bytes, 0)
+const largestFileBytes = Math.max(...fontFiles.map((fontFile) => fontFile.bytes))
+
+const chosenFamilies = fontMetrics.families.filter((family) => family.chosen)
+const rejectedFamilies = fontMetrics.families.filter((family) => !family.chosen)
+const measuredAt = new Date(`${fontMetrics.measuredAt}T00:00:00Z`)
+
+const formatKilobytes = (bytes: number) => `${(bytes / 1024).toFixed(1)} KB`
+const rgbLabel = (rgb: { red: number; green: number; blue: number }) => `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`
+const cssRgb = (rgb: { red: number; green: number; blue: number }) => `rgb(${rgb.red} ${rgb.green} ${rgb.blue})`
+
+const contrastVerdict = (ratio: number, minimum: number) => {
+  if (ratio >= 7) return 'AAA'
+  if (ratio >= minimum) return minimum >= 4.5 ? 'AA' : 'passa'
+  return '—'
+}
+
+const sampleByRole: Record<string, { text: string; className: string }> = {
+  corpo: { text: 'A regra que carrega em toda sessão paga em toda sessão.', className: 'font-serif text-[1.25rem] leading-[1.6]' },
+  interface: { text: 'Projetos · Notas · Sistema · Sobre', className: 'ui text-[1.125rem]' },
+  'medida e código': { text: '14.203 tokens · 0,04 USD · 28/30', className: 'metric text-[1.125rem]' },
+}
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${translate('system.title')} — Rodrigo Norys`}
+  description={translate('system.lead')}
+  alternateHref={alternateHref}
+>
+  <PageHeading title={translate('system.title')} lead={translate('system.lead')} />
+
+  <div class="max-w-4xl">
+
+  <!-- TIPOGRAFIA -->
+  <section class="mb-16">
+    <h2 class="kicker mb-2">{translate('system.typography')}</h2>
+    <p class="mb-6 max-w-[var(--measure)] text-muted">{translate('system.typographyLead')}</p>
+
+    <div class="divide-y divide-rule border-y border-rule">
+      {chosenFamilies.map((family) => {
+        const sample = sampleByRole[family.role]
+        const fontFile = fontFiles.find((candidate) =>
+          candidate.fileName.startsWith(family.name.toLowerCase().replace(/ /g, '-')),
+        )
+        return (
+          <article class="py-7">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+              <h3 class="text-xl font-semibold tracking-tight">{family.name}</h3>
+              <p class="kicker">{family.role}</p>
+            </div>
+
+            {sample && <p class={`mt-4 ${sample.className}`}>{sample.text}</p>}
+
+            <dl class="mt-5 flex flex-wrap gap-x-10 gap-y-2">
+              <div class="flex items-baseline gap-2">
+                <dt class="kicker">{translate('system.xheight')}</dt>
+                <dd class="metric text-sm">{family.xHeightRatio.toFixed(3)}</dd>
+              </div>
+              <div class="flex items-baseline gap-2">
+                <dt class="kicker">{translate('system.capheight')}</dt>
+                <dd class="metric text-sm">{family.capHeightRatio.toFixed(3)}</dd>
+              </div>
+              {fontFile && (
+                <div class="flex items-baseline gap-2">
+                  <dt class="kicker">woff2</dt>
+                  <dd class="metric text-sm">{formatKilobytes(fontFile.bytes)}</dd>
+                </div>
+              )}
+              <div class="flex items-baseline gap-2">
+                <dt class="kicker">{translate('system.license')}</dt>
+                <dd class="ui text-sm text-muted">{family.license}</dd>
+              </div>
+            </dl>
+          </article>
+        )
+      })}
+    </div>
+  </section>
+
+  <!-- O QUE FOI DESCARTADO -->
+  <section class="mb-16">
+    <h2 class="kicker mb-2">{translate('system.rejected')}</h2>
+    <p class="mb-6 max-w-[var(--measure)] text-muted">{translate('system.rejectedLead')}</p>
+
+    <ul class="divide-y divide-rule border-y border-rule">
+      {[...chosenFamilies, ...rejectedFamilies]
+        .sort((first, second) => second.xHeightRatio - first.xHeightRatio)
+        .map((family) => (
+          <li class="flex items-center gap-4 py-3">
+            <span class={`w-40 shrink-0 ${family.chosen ? 'font-semibold' : 'text-muted'}`}>
+              {family.name}
+            </span>
+            <span class="metric w-16 shrink-0 text-sm">{family.xHeightRatio.toFixed(3)}</span>
+            <span
+              class="h-2.5 rounded-sm"
+              style={`width: ${(family.xHeightRatio / 0.6) * 100}%; background-color: ${family.chosen ? 'var(--accent)' : 'var(--rule-strong)'}`}
+              aria-hidden="true"
+            ></span>
+          </li>
+        ))}
+    </ul>
+
+    <p class="ui mt-4 text-sm text-muted">
+      {translate('system.measuredAt')} <time datetime={fontMetrics.measuredAt}>{formatDate(measuredAt, locale)}</time>.
+      {' '}{translate('system.source')}: {fontMetrics.source}.
+    </p>
+  </section>
+
+  <!-- COR -->
+  <section class="mb-16">
+    <h2 class="kicker mb-2">{translate('system.color')}</h2>
+    <p class="mb-6 max-w-[var(--measure)] text-muted">{translate('system.colorLead')}</p>
+
+    <ul class="divide-y divide-rule border-y border-rule">
+      {tokens.map((token) => (
+        <li class="grid gap-3 py-4 sm:grid-cols-[12rem_1fr] sm:items-center sm:gap-6">
+          <span class="ui text-sm font-medium">--{token.name}</span>
+
+          <div class="flex items-center gap-3">
+            <span
+              class="h-9 w-9 shrink-0 rounded border border-rule-strong"
+              style={`background-color: ${cssRgb(token.rgb)}`}
+              aria-hidden="true"
+            ></span>
+            <span class="metric text-xs leading-tight">
+              {token.value}<br /><span class="text-muted">{rgbLabel(token.rgb)}</span>
+            </span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- CONTRASTE -->
+  <section class="mb-16">
+    <h2 class="kicker mb-2">{translate('system.contrast')}</h2>
+    <p class="mb-6 max-w-[var(--measure)] text-muted">{translate('system.contrastLead')}</p>
+
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse text-left">
+        <thead>
+          <tr class="border-b border-rule-strong">
+            <th class="kicker py-2 pr-4">{translate('system.pair')}</th>
+            <th class="kicker py-2 pr-4 text-right">{translate('system.ratio')}</th>
+            <th class="kicker py-2 text-right">{translate('system.minimum')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {contrastPairs.map((pair) => (
+            <tr class="border-b border-rule">
+              <td class="py-2.5 pr-4">
+                <span class="block">{pair.role}</span>
+                <span class="metric text-xs text-muted">--{pair.foreground} / --{pair.background}</span>
+              </td>
+              <td class="metric py-2.5 pr-4 text-right tabular-nums">
+                {pair.ratio.toFixed(2)}:1
+                <span class="kicker ml-2">{contrastVerdict(pair.ratio, pair.minimum)}</span>
+              </td>
+              <td class="metric py-2.5 text-right text-muted tabular-nums">{pair.minimum.toFixed(1)}:1</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ORCAMENTO -->
+  <section class="mb-14">
+    <h2 class="kicker mb-6">{translate('system.budget')}</h2>
+
+    <ul class="divide-y divide-rule border-y border-rule">
+      {fontFiles.map((fontFile) => (
+        <li class="py-3">
+          <div class="flex items-baseline justify-between gap-4">
+            <span class="metric text-sm">{fontFile.fileName.replace('.woff2', '')}</span>
+            <span class="metric text-sm tabular-nums">{formatKilobytes(fontFile.bytes)}</span>
+          </div>
+          <span
+            class="mt-1.5 block h-1.5 rounded-sm bg-accent"
+            style={`width: ${(fontFile.bytes / largestFileBytes) * 100}%`}
+            aria-hidden="true"
+          ></span>
+        </li>
+      ))}
+    </ul>
+
+    <p class="ui mt-4 flex items-baseline justify-between text-sm">
+      <span class="kicker">{translate('system.total')}</span>
+      <span class="metric tabular-nums">{formatKilobytes(totalBytes)}</span>
+    </p>
+  </section>
+  </div>
+</BaseLayout>

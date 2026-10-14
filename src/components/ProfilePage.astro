@@ -1,0 +1,229 @@
+---
+/**
+ * A pagina Sobre inteira sai de `src/content/profile/<idioma>.mdx`. Este
+ * componente so dispoe os campos — quem edita o conteudo nao abre um `.astro`.
+ *
+ * A ORDEM aqui nao e arbitraria. Quem abre esta pagina faz duas perguntas em
+ * sequencia — "posso contratar esta pessoa?" e so entao "vale a pena?" —, e por
+ * isso a elegibilidade e FAIXA de cabecalho, nao secao: ela responde a primeira
+ * pergunta sem gastar rolagem. A medida vem logo depois, porque numero com
+ * procedencia e o que sustenta tudo que o texto vai afirmar. Contato nao e
+ * segunda secao: ninguem escreve antes de decidir se vale escrever, e por a
+ * secao ali empurra a prova para baixo da dobra.
+ */
+import { getEntry, render } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Metrics from './Metrics.astro'
+import { type Locale, type UIKey, useTranslations, formatDate, formatPeriod } from '../i18n/ui'
+import { entryUrl, slugFromId } from '../i18n/routes'
+import { findTranslation } from '../lib/content'
+
+interface Props {
+  locale: Locale
+  alternateHref: string
+}
+
+const { locale, alternateHref } = Astro.props
+const translate = useTranslations(locale)
+
+const profile = await getEntry('profile', locale)
+if (!profile) throw new Error(`Falta src/content/profile/${locale}.mdx`)
+
+/** O schema guarda o frontmatter; o corpo MDX nao passa por ele. */
+if (
+  import.meta.env.PROD &&
+  process.env.ALLOW_PLACEHOLDER_TEXT !== '1' &&
+  /FICT[ÍI]CIO|PLACEHOLDER/i.test(profile.body ?? '')
+) {
+  throw new Error(
+    `src/content/profile/${locale}.mdx ainda tem texto de preenchimento no corpo. Escreva o conteúdo real antes de publicar.`,
+  )
+}
+
+const { Content } = await render(profile)
+const person = profile.data
+
+const selected = (
+  await Promise.all(
+    person.selectedWork.map(async (item) => {
+      const entry = await findTranslation(item.collection, item.translationKey, locale)
+      if (!entry) return null
+      return {
+        why: item.why,
+        title: entry.data.title,
+        href: entryUrl(locale, item.collection, slugFromId(entry.id)),
+      }
+    }),
+  )
+).filter((item) => item !== null)
+
+const eligibility = [
+  `${person.location.city}, ${person.location.country}`,
+  person.utcOffset,
+  person.overlapHours,
+  person.engagementModels.map((model) => translate(`engagement.${model}` as UIKey)).join(' · '),
+  translate(`availability.${person.availability}` as UIKey),
+].filter(Boolean)
+
+/**
+ * Derivado, nunca campo: dado estruturado que se digita vira segunda copia do
+ * mesmo fato e diverge na primeira edicao. E o Google e explicito — nao marque
+ * o que nao esta visivel na pagina.
+ */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  dateModified: person.updatedAt.toISOString(),
+  mainEntity: {
+    '@type': 'Person',
+    name: person.fullName,
+    jobTitle: person.role,
+    description: person.headline,
+    url: new URL(Astro.url.pathname, Astro.site).href,
+    knowsLanguage: person.languages,
+    knowsAbout: person.focusAreas.map((area) => area.title),
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: person.location.city,
+      addressCountry: person.location.country,
+    },
+    sameAs: person.links.filter((link) => link.rel !== 'email').map((link) => link.href),
+    alumniOf: person.education.map((item) => ({ '@type': 'EducationalOrganization', name: item.institution })),
+  },
+}
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${person.title} — ${person.fullName}`}
+  description={person.description}
+  alternateHref={alternateHref}
+>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+
+  <div class="max-w-3xl pt-12 sm:pt-16">
+  <header class="mb-10">
+    <p class="kicker">{person.role}</p>
+    <h1 class="mt-2 max-w-[var(--measure)] text-[clamp(2rem,1.5rem+2vw,2.75rem)] font-semibold leading-[1.15] tracking-tight">
+      {person.headline}
+    </h1>
+
+    <p class="ui mt-6 text-sm text-muted">
+      {eligibility.map((item, index) => (
+        <>
+          {index > 0 && <span aria-hidden="true"> · </span>}
+          <span>{item}</span>
+        </>
+      ))}
+    </p>
+
+    <ul class="ui mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      {person.links.map((link) => (
+        <li>
+          <a href={link.href} class="text-accent underline underline-offset-4">{link.label}</a>
+          {link.handle && <span class="metric ml-2 text-muted">{link.handle}</span>}
+        </li>
+      ))}
+      {person.resume && (
+        <li>
+          <a href={person.resume.href} class="text-accent underline underline-offset-4">{translate('about.resume')}</a>
+          <span class="metric ml-2 text-muted">{formatDate(person.resume.updatedAt, locale)}</span>
+        </li>
+      )}
+    </ul>
+  </header>
+
+  <Metrics items={person.metrics} class="mb-12" />
+
+  {person.focusAreas.length > 0 && (
+    <section class="mb-12">
+      <h2 class="kicker mb-4">{translate('about.focus')}</h2>
+      <dl class="divide-y divide-rule border-y border-rule">
+        {person.focusAreas.map((area) => (
+          <div class="grid gap-1 py-4 sm:grid-cols-[14rem_1fr] sm:gap-6">
+            <dt class="font-semibold">{area.title}</dt>
+            <dd class="text-muted">{area.detail}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  )}
+
+  <div class="prose mb-14">
+    <Content />
+  </div>
+
+  {selected.length > 0 && (
+    <section class="mb-14">
+      <h2 class="kicker mb-4">{translate('about.selectedWork')}</h2>
+      <ul class="divide-y divide-rule border-y border-rule">
+        {selected.map((item) => (
+          <li class="py-4">
+            <a href={item.href} class="font-semibold hover:text-accent">{item.title}</a>
+            <p class="text-muted">{item.why}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {person.experience.length > 0 && (
+    <section class="mb-14">
+      <h2 class="kicker mb-4">{translate('about.experience')}</h2>
+      <ol class="divide-y divide-rule border-y border-rule">
+        {person.experience.map((job) => (
+          <li class="py-6">
+            <p class="metric text-sm text-muted">{formatPeriod(job.startDate, job.endDate, locale)}</p>
+            <h3 class="mt-1 text-xl font-semibold tracking-tight">{job.role}</h3>
+            <p class="ui text-sm text-muted">
+              {job.orgUrl ? <a href={job.orgUrl} class="hover:text-accent">{job.org}</a> : job.org}
+            </p>
+            <p class="mt-3 max-w-[var(--measure)]">{job.summary}</p>
+            {job.highlights.length > 0 && (
+              <ul class="mt-3 max-w-[var(--measure)] list-disc space-y-1 pl-5 text-muted">
+                {job.highlights.map((highlight) => <li>{highlight}</li>)}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  {person.education.length > 0 && (
+    <section class="mb-14">
+      <h2 class="kicker mb-4">{translate('about.education')}</h2>
+      <ul class="divide-y divide-rule border-y border-rule">
+        {person.education.map((item) => (
+          <li class="grid gap-1 py-4 sm:grid-cols-[14rem_1fr] sm:gap-6">
+            <span class="metric text-sm text-muted">{formatPeriod(item.startDate, item.endDate, locale)}</span>
+            <span>
+              <span class="font-semibold">{item.course}</span>
+              <span class="ui block text-sm text-muted">{item.institution}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {person.toolbelt.length > 0 && (
+    <section class="mb-14">
+      <h2 class="kicker mb-3">{translate('about.toolbelt')}</h2>
+      <p class="metric text-sm text-muted">{person.toolbelt.join(' · ')}</p>
+    </section>
+  )}
+
+  <footer class="ui border-t border-rule pt-6 text-sm text-muted">
+    <ul class="flex flex-wrap gap-x-6 gap-y-2">
+      {person.links.map((link) => (
+        <li><a href={link.href} class="hover:text-accent">{link.handle ?? link.label}</a></li>
+      ))}
+    </ul>
+    <p class="mt-3">
+      {translate('about.updated')}{' '}
+      <time datetime={person.updatedAt.toISOString()}>{formatDate(person.updatedAt, locale)}</time>
+    </p>
+  </footer>
+  </div>
+</BaseLayout>

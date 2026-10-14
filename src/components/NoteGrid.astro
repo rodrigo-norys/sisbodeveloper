@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import BentoCard from './BentoCard.astro'
+import { type Locale, formatDate } from '../i18n/ui'
+import { entryUrl, slugFromId } from '../i18n/routes'
+
+interface Props {
+  locale: Locale
+  entries: CollectionEntry<'notes'>[]
+  emptyMessage: string
+  headingLevel?: 'h2' | 'h3'
+}
+
+const { locale, entries, emptyMessage, headingLevel } = Astro.props
+---
+
+{entries.length === 0 ? (
+  <p class="text-muted">{emptyMessage}</p>
+) : (
+  <div class="bento">
+    {entries.map((entry) => (
+      <BentoCard
+        title={entry.data.title}
+        href={entryUrl(locale, 'notes', slugFromId(entry.id))}
+        kicker={formatDate(entry.data.publishedAt, locale)}
+        description={entry.data.description}
+        icon="document"
+        headingLevel={headingLevel}
+      >
+        {entry.data.topics.length > 0 && (
+          <p class="ui mt-auto pt-5 text-sm text-muted">{entry.data.topics.join(' · ')}</p>
+        )}
+      </BentoCard>
+    ))}
+  </div>
+)}

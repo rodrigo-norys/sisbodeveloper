@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Hero from '../../components/Hero.astro'
+import ProjectGrid from '../../components/ProjectGrid.astro'
+import NoteGrid from '../../components/NoteGrid.astro'
+import { useTranslations } from '../../i18n/ui'
+import { sectionUrl } from '../../i18n/routes'
+import { listEntries } from '../../lib/content'
+
+const locale = 'en' as const
+const translate = useTranslations(locale)
+
+const projects = (await listEntries('projects', locale)).slice(0, 4)
+const notes = (await listEntries('notes', locale)).slice(0, 3)
+---
+
+<BaseLayout
+  locale={locale}
+  title="Rodrigo Norys — AI and context engineering"
+  description="Rodrigo Norys — AI and context engineering: projects, method, and the conclusions drawn from them."
+  alternateHref="/pt-br/"
+>
+  <Hero
+    lead="Context engineering,"
+    highlight="with a measurement behind every decision."
+    description="I design the structures that make an AI system work: what enters the context, when it enters, what it costs and what it rules out. Below are the projects where that was exercised and the conclusions I drew from them."
+  >
+    <a href={sectionUrl(locale, 'projects')} class="btn btn-primary">{translate('home.cta.projects')}</a>
+    <a href={sectionUrl(locale, 'about')} class="btn btn-secondary">{translate('home.cta.about')}</a>
+  </Hero>
+
+  <section class="mb-16" aria-labelledby="home-projects">
+    <div class="mb-6 flex items-baseline justify-between gap-4">
+      <h2 id="home-projects" class="text-[1.375rem] font-bold tracking-tight">{translate('home.featuredProjects')}</h2>
+      <a href={sectionUrl(locale, 'projects')} class="ui nav-link text-sm text-muted transition-colors hover:text-ink">{translate('home.seeAll')}</a>
+    </div>
+    <ProjectGrid locale={locale} entries={projects} emptyMessage={translate('projects.empty')} />
+  </section>
+
+  <section aria-labelledby="home-notes">
+    <div class="mb-6 flex items-baseline justify-between gap-4">
+      <h2 id="home-notes" class="text-[1.375rem] font-bold tracking-tight">{translate('home.recentNotes')}</h2>
+      <a href={sectionUrl(locale, 'notes')} class="ui nav-link text-sm text-muted transition-colors hover:text-ink">{translate('home.seeAll')}</a>
+    </div>
+    <NoteGrid locale={locale} entries={notes} emptyMessage={translate('notes.empty')} />
+  </section>
+</BaseLayout>

@@ -1,0 +1,61 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { render } from 'astro:content'
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import Metrics from '../../../components/Metrics.astro'
+import { useTranslations, formatDate, otherLocale } from '../../../i18n/ui'
+import { entryUrl, slugFromId } from '../../../i18n/routes'
+import { listEntries, findTranslation } from '../../../lib/content'
+
+export async function getStaticPaths() {
+  const entries = await listEntries('notes', 'pt-br')
+  return entries.map((entry) => ({ params: { slug: slugFromId(entry.id) }, props: { entry } }))
+}
+
+interface Props {
+  entry: CollectionEntry<'notes'>
+}
+
+const locale = 'pt-br' as const
+const translate = useTranslations(locale)
+const { entry } = Astro.props
+const { Content } = await render(entry)
+
+const translation = await findTranslation('notes', entry.data.translationKey, otherLocale(locale))
+const alternateHref = translation
+  ? entryUrl(otherLocale(locale), 'notes', slugFromId(translation.id))
+  : undefined
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${entry.data.title} — Rodrigo Norys`}
+  description={entry.data.description}
+  alternateHref={alternateHref}
+>
+  <article class="max-w-3xl pt-12 sm:pt-16">
+    <header class="mb-10 border-b border-rule pb-8">
+      <h1 class="text-[clamp(2rem,1.6rem+1.6vw,2.5rem)] font-extrabold leading-[1.15] tracking-[-0.02em]">{entry.data.title}</h1>
+      <p class="mt-3 text-lg text-muted">{entry.data.description}</p>
+      <p class="ui mt-4 text-sm text-muted">
+        {translate('entry.published')}{' '}
+        <time datetime={entry.data.publishedAt.toISOString()}>
+          {formatDate(entry.data.publishedAt, locale)}
+        </time>
+      </p>
+      {entry.data.topics.length > 0 && (
+        <ul class="mt-4 flex flex-wrap gap-2">
+          {entry.data.topics.map((topic) => (
+            <li class="ui rounded-full border border-rule px-3 py-0.5 text-sm text-muted">{topic}</li>
+          ))}
+        </ul>
+      )}
+    </header>
+
+    <Metrics items={entry.data.metrics} class="mb-10" />
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

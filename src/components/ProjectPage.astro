@@ -1,0 +1,100 @@
+---
+/**
+ * A pagina de um projeto, no padrao da pagina de origem: abertura com a linha
+ * em gradiente e as acoes, a decisao em tres cards, a grade de funcionalidades
+ * e, por ultimo, o texto do MDX. Os dois idiomas usam este mesmo componente.
+ */
+import type { CollectionEntry } from 'astro:content'
+import { render } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from './Hero.astro'
+import BentoCard from './BentoCard.astro'
+import Metrics from './Metrics.astro'
+import Icon from './Icon.astro'
+import { type Locale, type UIKey, useTranslations, otherLocale } from '../i18n/ui'
+import { entryUrl, slugFromId } from '../i18n/routes'
+import { findTranslation } from '../lib/content'
+
+interface Props {
+  locale: Locale
+  entry: CollectionEntry<'projects'>
+}
+
+const { locale, entry } = Astro.props
+const translate = useTranslations(locale)
+const data = entry.data
+const { Content } = await render(entry)
+
+const translation = await findTranslation('projects', data.translationKey, otherLocale(locale))
+const alternateHref = translation
+  ? entryUrl(otherLocale(locale), 'projects', slugFromId(translation.id))
+  : undefined
+
+const kicker = [translate(`project.status.${data.status}` as UIKey), ...data.stack.slice(0, 4)].join(' · ')
+
+const decision = [
+  { label: translate('project.problem'), value: data.problem },
+  { label: translate('project.constraint'), value: data.constraint },
+  { label: translate('project.proves'), value: data.proves },
+]
+
+const linkIcon = (href: string) => (new URL(href).hostname.endsWith('github.com') ? 'github' : 'external')
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${data.title} — Rodrigo Norys`}
+  description={data.description}
+  alternateHref={alternateHref}
+>
+  <article>
+    <Hero
+      kicker={kicker}
+      lead={data.headline?.lead}
+      highlight={data.headline?.highlight ?? data.title}
+      description={data.description}
+    >
+      {data.liveUrl && <a href={data.liveUrl} class="btn btn-primary">{translate('project.live')}</a>}
+      {data.repositoryUrl && (
+        <a href={data.repositoryUrl} class="btn btn-secondary">
+          <Icon name="github" size={16} />
+          {translate('project.repository')}
+        </a>
+      )}
+    </Hero>
+
+    {data.metrics.length > 0 && <Metrics items={data.metrics} class="mb-16 max-w-3xl" />}
+
+    <section class="mb-16" aria-labelledby="project-decision">
+      <h2 id="project-decision" class="mb-6 text-[1.375rem] font-bold tracking-tight">{translate('project.decision')}</h2>
+      <div class="bento">
+        {decision.map((fact) => (
+          <BentoCard title={fact.label} description={fact.value} class="min-h-0" />
+        ))}
+      </div>
+    </section>
+
+    {data.highlights.length > 0 && (
+      <section class="mb-16" aria-labelledby="project-highlights">
+        <h2 id="project-highlights" class="mb-6 text-[1.375rem] font-bold tracking-tight">{translate('project.highlights')}</h2>
+        <div class="bento">
+          {data.highlights.map((item) => (
+            <BentoCard
+              title={item.title}
+              size={item.size}
+              description={item.description}
+              icon={item.icon}
+              corner={item.link ? { href: item.link.href, label: item.link.label, icon: linkIcon(item.link.href) } : undefined}
+              image={item.image}
+              imageAlt={item.imageAlt}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <div class="prose mb-8">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,32 @@
+---
+/**
+ * A abertura de pagina no padrao da pagina de origem: a primeira linha em tinta,
+ * a segunda em gradiente. Sem `highlight`, o titulo inteiro vai em gradiente —
+ * e o caso de um projeto que ainda nao tem frase de abertura propria.
+ */
+interface Props {
+  lead?: string
+  highlight: string
+  kicker?: string
+  description?: string
+}
+
+const { lead, highlight, kicker, description } = Astro.props
+const hasActions = Astro.slots.has('default')
+---
+
+<header class="pb-16 pt-12 sm:pt-20">
+  {kicker && <p class="kicker mb-5">{kicker}</p>}
+  <h1 class="max-w-[30ch] text-[clamp(2.5rem,1.6rem+3.6vw,3.5rem)] font-extrabold leading-[1.1] tracking-[-0.03em]">
+    {lead && <>{lead}<br /></>}
+    <span class="gradient-text">{highlight}</span>
+  </h1>
+  {description && (
+    <p class="ui mt-6 max-w-[40.625rem] text-lg leading-relaxed text-muted">{description}</p>
+  )}
+  {hasActions && (
+    <div class="mt-10 flex flex-wrap gap-4">
+      <slot />
+    </div>
+  )}
+</header>

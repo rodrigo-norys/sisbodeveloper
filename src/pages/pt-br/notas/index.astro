@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import NoteGrid from '../../../components/NoteGrid.astro'
+import PageHeading from '../../../components/PageHeading.astro'
+import { useTranslations } from '../../../i18n/ui'
+import { listEntries } from '../../../lib/content'
+
+const locale = 'pt-br' as const
+const translate = useTranslations(locale)
+const entries = await listEntries('notes', locale)
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${translate('notes.title')} — Rodrigo Norys`}
+  description={translate('notes.lead')}
+  alternateHref="/en/notes/"
+>
+  <PageHeading title={translate('notes.title')} lead={translate('notes.lead')} />
+  <NoteGrid locale={locale} entries={entries} emptyMessage={translate('notes.empty')} headingLevel="h2" />
+</BaseLayout>

@@ -1,0 +1,354 @@
+@import "tailwindcss";
+
+/* Os tokens sao variaveis CSS e nao valores literais no tema: a paleta muda num
+   lugar so, e a /sistema le este mesmo arquivo para medir o contraste. */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-on-accent: var(--on-accent);
+
+  --font-serif: var(--font-literata);
+  --font-sans: var(--font-libre-franklin);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+/* Paleta slate/indigo, esquema unico escuro. Cada hex
+   foi convertido para oklch e conferido de volta: todos voltam ao mesmo sRGB.
+   ink/paper 17,98:1 · muted/paper 7,34:1 · accent/paper 9,44:1
+   on-accent/accent-strong 11,97:1
+   `--rule-strong` e a unica troca deliberada: o slate-700 de origem
+   (#334155), na borda do botao secundario, fica em 1,71:1 contra o card e reprova o SC 1.4.11;
+   slate-500 da 3,73:1 contra `--surface`, o fundo mais claro que ela encontra.
+   `--glow` e `--glow-mid` so aparecem com transparencia, via color-mix, no
+   gradiente radial do fundo. */
+:root {
+  --paper: oklch(18.09% 0.0344 267.36);
+  --surface: oklch(21.01% 0.0318 264.66);
+  --ink: oklch(98.42% 0.0034 247.86);
+  --muted: oklch(71.07% 0.0351 256.79);
+  --rule: oklch(27.81% 0.0296 256.85);
+  --rule-strong: oklch(55.44% 0.0407 257.42);
+  --accent: oklch(78.53% 0.1041 274.71);
+  --accent-strong: oklch(86.99% 0.0622 274.04);
+  --accent-deep: oklch(68.01% 0.1583 276.93);
+  --on-accent: oklch(20.77% 0.0398 265.75);
+  --glow: oklch(58.54% 0.2041 277.12);
+  --glow-mid: oklch(27.95% 0.0368 260.03);
+
+  --measure: 66ch;
+  --shell: 75rem;
+}
+
+html {
+  color-scheme: dark;
+}
+
+/* O brilho indigo nasce no topo e se dissolve no papel aos 80% da altura, como
+   na pagina de origem: um gradiente so, esticado pela pagina inteira. */
+body {
+  background-color: var(--paper);
+  background-image: radial-gradient(
+    at 50% 0%,
+    color-mix(in oklch, var(--glow) 15%, transparent) 0%,
+    color-mix(in oklch, var(--glow-mid) 40%, transparent) 35%,
+    var(--paper) 80%
+  );
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+}
+
+/* A interface — navegacao, rotulo, data, cabecalho de tabela — nunca e a face
+   do corpo. A separacao e o que faz o texto longo parecer publicado e o resto
+   parecer instrumento. */
+.ui {
+  font-family: var(--font-sans);
+  font-feature-settings: "cv05";
+}
+
+.kicker {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Numero medido e identificador saem da monoespacada, sempre. E o unico lugar
+   em que a tipografia carrega significado em vez de hierarquia. */
+.metric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* O corpo de nota e de projeto vem de MDX, sem classe nenhuma no texto: a
+   estilizacao precisa alcancar os elementos gerados. Escrito a mao em vez de
+   `@tailwindcss/typography` para nao acrescentar dependencia por um bloco. */
+@layer components {
+  .prose {
+    max-width: var(--measure);
+    font-size: 1.25rem;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .prose > * + * {
+    margin-top: 1.4em;
+  }
+
+  .prose h2 {
+    margin-top: 2.2em;
+    font-size: 1.75rem;
+    line-height: 1.25;
+  }
+
+  .prose h3 {
+    margin-top: 1.8em;
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .prose a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: from-font;
+  }
+
+  .prose strong {
+    font-weight: 600;
+  }
+
+  .prose ul,
+  .prose ol {
+    padding-left: 1.4em;
+  }
+
+  .prose ul { list-style: disc; }
+  .prose ol { list-style: decimal; }
+  .prose li + li { margin-top: 0.4em; }
+
+  .prose blockquote {
+    border-left: 2px solid var(--rule-strong);
+    padding-left: 1em;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* 0,9em pela largura do avanco da monoespacada, nao para corrigir o navegador:
+     com a familia declarada por nome, o encolhimento do UA para `monospace` nao
+     acontece. A altura-x das duas quase coincide — 0,516 na Plex Mono contra
+     0,507 na Literata, medido no `OS/2` — entao o degrau de tamanho e o unico
+     ajuste que o par precisa. */
+  .prose :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background-color: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 0.25rem;
+    padding: 0.1em 0.3em;
+  }
+
+  .prose pre {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    background-color: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 0.375rem;
+    padding: 1em;
+    overflow-x: auto;
+  }
+
+  .prose hr {
+    border-color: var(--rule);
+    margin-block: 2.5em;
+  }
+}
+
+/* A casca e os blocos que se repetem em toda pagina: a mesma largura, o mesmo
+   card e a mesma grade de seis colunas da pagina de origem. */
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: var(--shell);
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  /* O fundo tem o dobro da largura do texto e anda ate 200%: como o gradiente
+     comeca e termina em tons proximos, o laco nao mostra emenda. */
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 50%, var(--accent-strong) 100%) 0 0 / 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: shine 5s linear infinite;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.75rem;
+    padding-inline: 1.5rem;
+    border-radius: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    white-space: nowrap;
+    transition: opacity 0.3s, border-color 0.3s;
+  }
+
+  .btn-primary {
+    background-color: var(--accent-strong);
+    color: var(--on-accent);
+    font-weight: 600;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+
+  .btn-secondary {
+    border: 1px solid var(--rule-strong);
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--ink);
+  }
+
+  .btn:focus-visible,
+  .card-corner:focus-visible,
+  .nav-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .bento {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 1rem;
+    padding: 1.5rem 2rem 2rem;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .card-large {
+    grid-column: span 3;
+    min-height: 28rem;
+  }
+
+  .card-small {
+    grid-column: span 2;
+    min-height: 15rem;
+  }
+
+  .card-wide {
+    grid-column: 1 / -1;
+  }
+
+  /* So o card que leva a algum lugar se levanta: movimento em card estatico
+     promete um clique que nao existe. */
+  .card:has(.card-link):hover,
+  .card:has(.card-link:focus-visible) {
+    border-color: var(--rule-strong);
+    transform: translateY(-4px);
+  }
+
+  .card:has(.card-link:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .card-link {
+    outline: none;
+  }
+
+  .card-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .card-corner {
+    position: absolute;
+    top: 2rem;
+    right: 1.5rem;
+    z-index: 2;
+    color: var(--muted);
+    transition: color 0.3s, transform 0.3s;
+  }
+
+  .card-corner:hover {
+    color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  .card-media {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
+  .card-media img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 15px rgb(0 0 0 / 0.4);
+  }
+
+  @media (max-width: 64rem) {
+    .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card-large { grid-column: span 2; }
+    .card-small { grid-column: span 1; }
+  }
+
+  @media (max-width: 48rem) {
+    .bento { grid-template-columns: minmax(0, 1fr); }
+    .card-large,
+    .card-small { grid-column: span 1; min-height: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gradient-text { animation: none; }
+  }
+}
+
+@keyframes shine {
+  to { background-position: 200% center; }
+}

@@ -1,0 +1,15 @@
+---
+interface Props {
+  title: string
+  lead?: string
+}
+
+const { title, lead } = Astro.props
+---
+
+<header class="pb-12 pt-12 sm:pt-16">
+  <h1 class="text-[clamp(2.25rem,1.7rem+2vw,3rem)] font-extrabold leading-[1.1] tracking-[-0.03em]">
+    <span class="gradient-text">{title}</span>
+  </h1>
+  {lead && <p class="ui mt-4 max-w-[40.625rem] text-lg leading-relaxed text-muted">{lead}</p>}
+</header>

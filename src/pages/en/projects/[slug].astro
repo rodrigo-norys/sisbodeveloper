@@ -1,0 +1,14 @@
+---
+import ProjectPage from '../../../components/ProjectPage.astro'
+import { slugFromId } from '../../../i18n/routes'
+import { listEntries } from '../../../lib/content'
+
+export async function getStaticPaths() {
+  const entries = await listEntries('projects', 'en')
+  return entries.map((entry) => ({ params: { slug: slugFromId(entry.id) }, props: { entry } }))
+}
+
+const { entry } = Astro.props
+---
+
+<ProjectPage locale="en" entry={entry} />

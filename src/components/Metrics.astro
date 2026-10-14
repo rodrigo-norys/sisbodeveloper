@@ -1,0 +1,39 @@
+---
+/**
+ * O bloco de medida. Ele existe porque duas avaliacoes independentes chegaram na
+ * mesma conclusao: uma identidade editorial sinaliza "escreve bem" e nao sinaliza
+ * engenharia de IA — e o aparato que sinalizaria ficava dentro do artigo, abaixo
+ * da dobra, onde os 40 segundos de uma primeira visita nao chegam.
+ *
+ * Aqui o numero medido sobe para a primeira tela. Rotulo na sans da interface,
+ * valor na monoespacada com `tabular-nums`, sem cartao e sem borda externa: o
+ * peso visual vem do alinhamento da coluna, nao de caixa.
+ *
+ * `href` e opcional e aponta para a peca que PROVA o numero. Numero medido
+ * com procedencia clicavel vale mais que adjetivo — e e o que separa medida
+ * de alegacao.
+ */
+interface Props {
+  items: { label: string; value: string; href?: string }[]
+  class?: string
+}
+
+const { items, class: className = '' } = Astro.props
+---
+
+{items.length > 0 && (
+  <dl class={`divide-y divide-rule border-y border-rule ${className}`}>
+    {items.map((item) => (
+      <div class="flex items-baseline justify-between gap-6 py-2.5">
+        <dt class="kicker">{item.label}</dt>
+        <dd class="metric text-[0.9375rem] tabular-nums">
+          {item.href ? (
+            <a href={item.href} class="text-accent underline underline-offset-4">{item.value}</a>
+          ) : (
+            item.value
+          )}
+        </dd>
+      </div>
+    ))}
+  </dl>
+)}

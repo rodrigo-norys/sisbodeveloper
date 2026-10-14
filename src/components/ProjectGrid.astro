@@ -1,0 +1,55 @@
+---
+/**
+ * Projeto em destaque ocupa meia linha (`large`); o resto, um terco. Com o
+ * acervo pequeno de hoje, dois destaques fecham a primeira linha sozinhos.
+ */
+import type { CollectionEntry } from 'astro:content'
+import BentoCard from './BentoCard.astro'
+import { type Locale, type UIKey, useTranslations } from '../i18n/ui'
+import { entryUrl, slugFromId } from '../i18n/routes'
+
+interface Props {
+  locale: Locale
+  entries: CollectionEntry<'projects'>[]
+  emptyMessage: string
+  headingLevel?: 'h2' | 'h3'
+}
+
+const { locale, entries, emptyMessage, headingLevel } = Astro.props
+const translate = useTranslations(locale)
+---
+
+{entries.length === 0 ? (
+  <p class="text-muted">{emptyMessage}</p>
+) : (
+  <div class="bento">
+    {entries.map((entry) => {
+      const data = entry.data
+      const kicker = [translate(`project.status.${data.status}` as UIKey), ...data.stack.slice(0, 3)].join(' · ')
+      return (
+        <BentoCard
+          title={data.title}
+          size={data.featured ? 'large' : 'small'}
+          href={entryUrl(locale, 'projects', slugFromId(entry.id))}
+          kicker={kicker}
+          description={data.description}
+          corner={data.repositoryUrl ? { href: data.repositoryUrl, label: `${translate('project.repository')}: ${data.title}`, icon: 'github' } : undefined}
+          image={data.cover}
+          imageAlt={data.coverAlt}
+          headingLevel={headingLevel}
+        >
+          {data.metrics.length > 0 && (
+            <dl class={`flex flex-wrap gap-x-8 gap-y-1 ${data.cover ? 'mt-5' : 'mt-auto border-t border-rule pt-5'}`}>
+              {data.metrics.slice(0, 3).map((metric) => (
+                <div class="flex items-baseline gap-2">
+                  <dt class="kicker">{metric.label}</dt>
+                  <dd class="metric text-sm">{metric.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </BentoCard>
+      )
+    })}
+  </div>
+)}
