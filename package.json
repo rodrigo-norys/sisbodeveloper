@@ -20,9 +20,9 @@
     "verify": "npm run test:hooks && npm run test:sensitive-data && npm run check:types && npm run lint && npm run build:verify && npm run check:sensitive-data && npm test"
   },
   "dependencies": {
-    "@astrojs/mdx": "8.0.2",
+    "@astrojs/mdx": "8.0.3",
     "@tailwindcss/vite": "4.3.3",
-    "astro": "7.3.4",
+    "astro": "7.3.7",
     "tailwindcss": "4.3.3"
   },
   "allowScripts": {
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@astrojs/compiler-rs": "0.4.1",
+    "@astrojs/compiler-rs": "0.5.1",
     "@types/node": "22.20.5",
     "html-validate": "11.16.2",
     "parse5": "8.0.1",
