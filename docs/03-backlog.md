@@ -42,7 +42,7 @@ As tarefas vêm na ordem de execução, que é a ordem deste documento e a ordem
 
 | Épico | Tarefas, na ordem | ✅ | 🔎 | Total |
 |---|---|---|---|---|
-| E1 — Proteção antes de publicar | T-01 a T-10 | <!-- conta:tarefas-concluidas[E1] -->7<!-- /conta --> | <!-- conta:tarefas-em-validacao[E1] -->1<!-- /conta --> | <!-- conta:tarefas[E1] -->10<!-- /conta --> |
+| E1 — Proteção antes de publicar | T-01 a T-10 | <!-- conta:tarefas-concluidas[E1] -->9<!-- /conta --> | <!-- conta:tarefas-em-validacao[E1] -->0<!-- /conta --> | <!-- conta:tarefas[E1] -->10<!-- /conta --> |
 | E2 — Nada vai ao ar errado | T-11 a T-14 | <!-- conta:tarefas-concluidas[E2] -->0<!-- /conta --> | <!-- conta:tarefas-em-validacao[E2] -->0<!-- /conta --> | <!-- conta:tarefas[E2] -->4<!-- /conta --> |
 | E3 — Páginas, compartilhamento e contato | T-15 a T-21 | <!-- conta:tarefas-concluidas[E3] -->0<!-- /conta --> | <!-- conta:tarefas-em-validacao[E3] -->0<!-- /conta --> | <!-- conta:tarefas[E3] -->7<!-- /conta --> |
 | E4 — Conteúdo real | T-22 a T-24 | <!-- conta:tarefas-concluidas[E4] -->0<!-- /conta --> | <!-- conta:tarefas-em-validacao[E4] -->0<!-- /conta --> | <!-- conta:tarefas[E4] -->3<!-- /conta --> |
@@ -59,12 +59,12 @@ O ✅ e o 🔎 de cada linha copiam o título da tarefa, que é a fonte; a cópi
 - [T-01 — Renomear os identificadores para inglês, sem nome de uma letra](#t-01) ✅
 - [T-02 — Montar o portão de qualidade](#t-02) ✅
 - [T-03 — Reprovar nome de uma letra no portão](#t-03) ✅
-- [T-04 — Adaptar as skills `/sugerir-commits` e `/sugerir-prs`](#t-04) 🔎
+- [T-04 — Adaptar as skills `/sugerir-commits` e `/sugerir-prs`](#t-04) ✅
 - [T-05 — Validar o HTML gerado e os links internos](#t-05) ✅
 - [T-06 — Medir o peso das páginas e travar o orçamento](#t-06) ✅
 - [T-07 — Guardar o repositório contra dado sensível](#t-07) ✅
 - [T-08 — Ligar o kit de documentação](#t-08) ✅
-- [T-09 — Montar a estrutura de contexto do agente](#t-09)
+- [T-09 — Montar a estrutura de contexto do agente](#t-09) ✅
 - [T-10 — Publicar o repositório com as guardas do GitHub](#t-10)
 
 **[Épico E2 — Nada vai ao ar errado](#e2)**
@@ -198,7 +198,7 @@ Entrega as camadas que conferem cada mudança — o portão de qualidade, as gua
 
 <a id="t-04"></a>
 
-### T-04 — Adaptar as skills `/sugerir-commits` e `/sugerir-prs` 🔎 AGUARDA VALIDAÇÃO
+### T-04 — Adaptar as skills `/sugerir-commits` e `/sugerir-prs` ✅ CONCLUÍDA em 14-10-2026
 
 **Cumpre.** `REQ-31`
 
@@ -220,13 +220,13 @@ Entrega as camadas que conferem cada mudança — o portão de qualidade, as gua
 
 **Validação da `/sugerir-commits`, 14-10-2026.** Primeiro uso, invocado pelo dono, com o repositório remoto recriado privado e vazio: o plano saiu na `main` local, com o portão verde antes dele, a varredura de dado sensível limpa e o índice sem nada preparado; o dono aceitou, e os commits do histórico inicial entraram com o `--stat` de cada um batendo com o plano. Cada ponto foi conferido num worktree temporário, e não com `git stash`, que tiraria do disco os hooks ainda não commitados: os três primeiros com o build, porque o portão ainda não existia, e os três últimos com o `npm run verify`, num checkout limpo. Casos-limite ainda não exercidos: o portão vermelho, o índice preparado, e a `main` já no remoto. Em seguida, com o aceite do dono, a `/sugerir-prs` cumpriu o caso do remoto vazio: conferiu repositório, remoto e `gh`, varreu o histórico inteiro atrás de caminho de usuário e de variável de ambiente, e as imagens versionadas atrás de metadado, sem achado, e fez só o `git push -u origin main`, sem PR. Falta a validação dela num PR de verdade.
 
-**Validação na reconstrução do repositório, 14-10-2026.** No repositório novo, ainda sem remoto, a `/sugerir-prs` mediu os pré-requisitos — repositório ok, `git config --get remote.origin.url` vazio, `gh` autenticado — e parou dizendo que falta o remoto, sem plano, push ou PR. Com o índice vazio, a `/sugerir-commits` rodou o portão, que saiu 1: o motor do kit não via o `03` e o `04`, ainda fora do git, e cada piso dele leu zero; a skill parou antes do plano, sem `git add` nem commit. O portão vermelho é também o primeiro critério de aceite da `REQ-31`. Ficam para depois o índice já preparado e a `main` já no remoto, e a tarefa fecha quando os dois forem exercitados.
+**Validação na reconstrução do repositório, 14-10-2026.** No repositório novo, ainda sem remoto, a `/sugerir-prs` mediu os pré-requisitos — repositório ok, `git config --get remote.origin.url` vazio, `gh` autenticado — e parou dizendo que falta o remoto, sem plano, push ou PR. Com o índice vazio, a `/sugerir-commits` rodou o portão, que saiu 1: o motor do kit não via o `03` e o `04`, ainda fora do git, e cada piso dele leu zero; a skill parou antes do plano, sem `git add` nem commit. O portão vermelho é também o primeiro critério de aceite da `REQ-31`. Com o índice preparado com o repositório inteiro — o motor do kit só vê a documentação que o git rastreia —, a `/sugerir-commits` rodou o portão, verde, apontou o índice preparado antes do aceite e começou o plano por `git read-tree --empty`, para cada commit levar só os seus caminhos; os commits do histórico inicial entraram com o `--stat` batendo com o plano, cada ponto conferido num worktree temporário, e a `/sugerir-prs`, com o remoto vazio, fez só o `git push -u origin main`. Duas lacunas do repositório sem commit apareceram nesse caminho: o portão só vê a documentação com o índice preparado, e os avisos `--nuas` e `--pares` não têm a `main` de base. Na `T-09`, com o `HEAD` na `main` e a `main` já no remoto, a `/sugerir-commits` decidiu a branch nova `T-09/feat-contexto-agente` e começou o plano por ela, sem commitar na `main`. Com isso, cada caso-limite da lista ficou conferido numa execução da skill, e a tarefa fecha.
 
 **Definition of done.**
 - [x] Critério de aceite de cada `REQ-NN` citado acima, verificado — o do portão vermelho, na reconstrução
-- [ ] Cada caso-limite conferido numa execução da skill — ver a validação na reconstrução
+- [x] Cada caso-limite conferido numa execução da skill — ver a validação na reconstrução
 - [x] Linha correspondente em `04-rastreabilidade.md` preenchida
-- [ ] Validado pelo dono
+- [x] Validado pelo dono
 
 [↑ Índice](#indice)
 
@@ -357,7 +357,7 @@ Entrega as camadas que conferem cada mudança — o portão de qualidade, as gua
 
 <a id="t-09"></a>
 
-### T-09 — Montar a estrutura de contexto do agente
+### T-09 — Montar a estrutura de contexto do agente ✅ CONCLUÍDA em 14-10-2026
 
 **Cumpre.** `REQ-30`
 
@@ -374,10 +374,12 @@ Entrega as camadas que conferem cada mudança — o portão de qualidade, as gua
 **Fora desta fatia.** As skills: `T-04`.
 
 **Definition of done.**
-- [ ] Critério de aceite de cada `REQ-NN` citado acima, verificado
-- [ ] Teste cobrindo cada caso-limite listado
-- [ ] Linha correspondente em `04-rastreabilidade.md` preenchida
-- [ ] `npm run verify` verde
+- [x] Critério de aceite de cada `REQ-NN` citado acima, verificado
+- [x] Teste cobrindo cada caso-limite listado
+- [x] Linha correspondente em `04-rastreabilidade.md` preenchida
+- [x] `npm run verify` verde
+
+**O que ensinou.** Os dois hooks do kit de contexto do `metodo-sdd` (`a20d2c4`) entraram como estão (`cmp` sai 0): `registrar-carga.sh`, no lugar do `registrar-instrucoes.sh`, grava em `.claude/local/`, que o `.gitignore` exclui; `conferir-alinhamento.sh` avisa, sem bloquear, a peça de `.claude/` que o `CLAUDE.md` não cita, no `PostToolUse` de `Write`, `Edit` e `MultiEdit` e no `ConfigChange` das configurações e das skills. O bloco de hooks do `settings.json` somou os dois ao `PreToolUse` que já havia. As duas guardas de exemplo do kit entraram em `tests/` com o nome de lá, porque o aviso de alinhamento cita uma delas pelo nome, e com duas adaptações: funções exportadas, para os casos-limite rodarem sobre listas inventadas, e a leitura do que iria para um commit — o rastreado que existe mais o novo que o `.gitignore` não exclui, como `tests/support.mjs` —, e não só do rastreado, porque o portão roda antes do `git add`, e só o rastreado deixaria passar o hook novo sem citação e cobraria a do hook apagado. Pisos lidos na adoção: 7 peças em `.claude/` (1 regra, 2 skills, 4 arquivos de hook), piso 5; 1 regra, piso 0. O inventário da adoção não deixou resíduo: as guardas apontaram os dois hooks novos ainda sem citação, que o `CLAUDE.md` passou a citar, e a única regra por caminho já nomeava a guarda. O `guard-dados-sensiveis.sh` passou a proteger `tests/`, e também `tools/` e `.github/`: o comentário do próprio hook pede que diretório versionado criado depois dele seja acrescentado à lista, e os dois nasceram nas `T-07` e `T-08` sem entrar — a regressão ainda dava `rm -rf .github` como permitido. A regressão trocou `PERFIL_RASCUNHO` por `ALLOW_PLACEHOLDER_TEXT`. Provado por mutação: sem `tests`, `tools` e `.github` na lista, numa cópia do hook, quatro casos da regressão reprovaram; um hook falso em `.claude/hooks/`, sem citação, disparou o aviso de alinhamento e reprovou a guarda; o registro de carga gravou a linha em `.claude/local/`, fora do `git status`. Fica no disco a pasta `.claude/logs/` do registro antigo, ignorada por um `.gitignore` próprio; apagá-la é do dono, porque o hook bloqueia `rm -r` em `.claude/`.
 
 [↑ Índice](#indice)
 

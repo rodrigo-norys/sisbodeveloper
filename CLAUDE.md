@@ -72,10 +72,14 @@ As peças do agente em `.claude/` — as skills em `.claude/skills/`, a regra po
 - `guard-dados-sensiveis.sh` — hook antes de todo comando do shell: bloqueia `git add` em massa ou
   forçado, arquivo de ambiente no staging, escrita em `.claude/` e `rm -r` em diretório versionado.
 - `test-guard.sh` — a regressão do hook acima.
-- `registrar-instrucoes.sh` — hook do registro de carga: cada instrução que entra em contexto, em
-  `.claude/logs/`, fora do git.
+- `registrar-carga.sh` — hook do registro de carga, do kit de contexto: cada instrução que entra
+  em contexto, com quando, por quê e qual, em `.claude/local/`, fora do git.
+- `conferir-alinhamento.sh` — hook do aviso de alinhamento, do kit de contexto: depois de cada
+  escrita em `.claude/` ou neste arquivo, aponta a peça que ele não cita; não bloqueia.
 
-O porquê, a estrutura e os papéis estão em `docs/metodo/engenharia-de-contexto.md`.
+Que toda peça seja citada aqui, e que toda regra por caminho nomeie a sua guarda, quem garante é
+`tests/contexto-cita-pecas.test.mjs` e `tests/regras-citam-guarda.test.mjs` (`REQ-30`). O porquê,
+a estrutura e os papéis estão em `docs/metodo/engenharia-de-contexto.md`.
 
 ## Estrutura
 
