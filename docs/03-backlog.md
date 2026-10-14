@@ -42,7 +42,7 @@ As tarefas vêm na ordem de execução, que é a ordem deste documento e a ordem
 
 | Épico | Tarefas, na ordem | ✅ | 🔎 | Total |
 |---|---|---|---|---|
-| E1 — Proteção antes de publicar | T-01 a T-10 | <!-- conta:tarefas-concluidas[E1] -->9<!-- /conta --> | <!-- conta:tarefas-em-validacao[E1] -->1<!-- /conta --> | <!-- conta:tarefas[E1] -->10<!-- /conta --> |
+| E1 — Proteção antes de publicar | T-01 a T-10 | <!-- conta:tarefas-concluidas[E1] -->10<!-- /conta --> | <!-- conta:tarefas-em-validacao[E1] -->0<!-- /conta --> | <!-- conta:tarefas[E1] -->10<!-- /conta --> |
 | E2 — Nada vai ao ar errado | T-11 a T-14 | <!-- conta:tarefas-concluidas[E2] -->0<!-- /conta --> | <!-- conta:tarefas-em-validacao[E2] -->0<!-- /conta --> | <!-- conta:tarefas[E2] -->4<!-- /conta --> |
 | E3 — Páginas, compartilhamento e contato | T-15 a T-21 | <!-- conta:tarefas-concluidas[E3] -->0<!-- /conta --> | <!-- conta:tarefas-em-validacao[E3] -->0<!-- /conta --> | <!-- conta:tarefas[E3] -->7<!-- /conta --> |
 | E4 — Conteúdo real | T-22 a T-24 | <!-- conta:tarefas-concluidas[E4] -->0<!-- /conta --> | <!-- conta:tarefas-em-validacao[E4] -->0<!-- /conta --> | <!-- conta:tarefas[E4] -->3<!-- /conta --> |
@@ -65,7 +65,7 @@ O ✅ e o 🔎 de cada linha copiam o título da tarefa, que é a fonte; a cópi
 - [T-07 — Guardar o repositório contra dado sensível](#t-07) ✅
 - [T-08 — Ligar o kit de documentação](#t-08) ✅
 - [T-09 — Montar a estrutura de contexto do agente](#t-09) ✅
-- [T-10 — Publicar o repositório com as guardas do GitHub](#t-10) 🔎
+- [T-10 — Publicar o repositório com as guardas do GitHub](#t-10) ✅
 
 **[Épico E2 — Nada vai ao ar errado](#e2)**
 
@@ -387,7 +387,7 @@ Entrega as camadas que conferem cada mudança — o portão de qualidade, as gua
 
 <a id="t-10"></a>
 
-### T-10 — Publicar o repositório com as guardas do GitHub 🔎 AGUARDA VALIDAÇÃO
+### T-10 — Publicar o repositório com as guardas do GitHub ✅ CONCLUÍDA em 14-10-2026
 
 **Cumpre.** `REQ-31`
 
@@ -404,12 +404,14 @@ Entrega as camadas que conferem cada mudança — o portão de qualidade, as gua
 **Fora desta fatia.** Ligar o Pages: `T-25`. A conferência semanal do site no ar: `T-28`.
 
 **Definition of done.**
-- [ ] Critério de aceite de cada `REQ-NN` citado acima, verificado
-- [ ] Cada caso-limite provado no repositório
-- [ ] Linha correspondente em `04-rastreabilidade.md` preenchida
-- [ ] Validado pelo dono
+- [x] Critério de aceite de cada `REQ-NN` citado acima, verificado — os três da `REQ-31` que cabem ao GitHub, no repositório público; o da `/sugerir-commits`, na `T-04`
+- [x] Cada caso-limite provado no repositório — ver o que a tarefa ensinou
+- [x] Linha correspondente em `04-rastreabilidade.md` preenchida
+- [x] Validado pelo dono
 
 **Entregue até aqui.** Os dois workflows em `.github/workflows/` — `verify`, que roda `npm run verify`, e `dependency-review` — e o `.github/dependabot.yml`. O portão passou num clone raso, com HEAD destacado, sem identidade do `git` e com o cache do npm vazio, como no CI. Falta a parte da conta, pelo roteiro que a execução entrega: tornar o repositório público, ligar as guardas do GitHub e o ruleset. Depois vem a prova dos casos-limite no repositório público e a validação do dono. Três leituras do contrato. A primeira: o `CLAUDE.md` deixa a tarefa `plataforma` sem commit até a validação, mas esta só se valida no GitHub, e o contrato manda o primeiro PR. A segunda: o único check obrigatório do ruleset é o `verify`, como o contrato enumera, e a revisão de dependências reprova sem bloquear o merge. A terceira: a espera do Dependabot é de uma semana nos dois ecossistemas, e só as versões menores e de correção vão agrupadas, porque versão maior é tarefa própria (`R-03`). As actions estão fixadas na última versão que já tinha cumprido a mesma espera.
+
+**O que ensinou.** A conta, pelo roteiro, em 14-10-2026: o dono tornou o repositório público e ligou os alertas e as atualizações de segurança do Dependabot, a varredura de segredo com bloqueio no push, o CodeQL na configuração padrão, a exigência de SHA nas actions e o ruleset `main` — PR obrigatório sem aprovação exigida, `verify` do GitHub Actions obrigatório em modo estrito, deleção e force push bloqueados, lista de exceção vazia —, tudo conferido pela API, com `current_user_can_bypass` em `never`; a pedido dele, também a remoção da branch no merge. Dois ajustes não pegaram na primeira passada, e só a releitura pela API os mostrou: a exigência de SHA não tinha sido salva, e o CodeQL, ligado com a main ainda sem workflow, detectou só JavaScript e TypeScript e não acrescentou a linguagem de Actions depois, que entrou pela edição da configuração. O PR #3, com os arquivos, passou o `verify` ainda privado, a revisão de dependências reprovou até a publicação, por indisponibilidade, e o merge dele foi o primeiro sob o ruleset. Os casos-limite, num PR descartável, o #4, fechado sem merge, e num push direto: a faixa `^4.17.20` do `lodash` reprovou o `verify` pela `REQ-33`, e o merge foi recusado pela regra da main; o push de um commit vazio na main saiu com `GH013`; o `lodash@4.17.20` reprovou a revisão de dependências, com duas vulnerabilidades altas e duas moderadas. A expressão de evento em `run:` mostrou o limite da suíte padrão do CodeQL: o título do PR num workflow de `pull_request` não deu resultado, porque a regra desse caso, `actions/code-injection/medium`, tem precisão média e fica na suíte estendida; a `actions/code-injection/critical`, da suíte padrão, só aponta job privilegiado, e o CodeQL não considera privilegiado o job de `pull_request` nem o que declara permissão só de leitura. Com a escolha do dono, a prova foi um workflow de `issue_comment` sem bloco de permissões, que nunca roda a partir de uma branch: o CodeQL apontou a injeção crítica e reprovou o check. Nos workflows deste repositório, todos com permissão só de leitura, a ausência de expressão de evento em `run:` (`02` §8) segue com a revisão, e não com o CodeQL. O Dependabot leu a espera e os grupos do arquivo e, na primeira rodada das actions, não abriu PR, porque a versão nova do `setup-node` ainda estava dentro da espera.
 
 [↑ Índice](#indice)
 
