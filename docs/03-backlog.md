@@ -42,7 +42,7 @@ As tarefas vêm na ordem de execução, que é a ordem deste documento e a ordem
 
 | Épico | Tarefas, na ordem | ✅ | 🔎 | Total |
 |---|---|---|---|---|
-| E1 — Proteção antes de publicar | T-01 a T-10 | <!-- conta:tarefas-concluidas[E1] -->9<!-- /conta --> | <!-- conta:tarefas-em-validacao[E1] -->0<!-- /conta --> | <!-- conta:tarefas[E1] -->10<!-- /conta --> |
+| E1 — Proteção antes de publicar | T-01 a T-10 | <!-- conta:tarefas-concluidas[E1] -->9<!-- /conta --> | <!-- conta:tarefas-em-validacao[E1] -->1<!-- /conta --> | <!-- conta:tarefas[E1] -->10<!-- /conta --> |
 | E2 — Nada vai ao ar errado | T-11 a T-14 | <!-- conta:tarefas-concluidas[E2] -->0<!-- /conta --> | <!-- conta:tarefas-em-validacao[E2] -->0<!-- /conta --> | <!-- conta:tarefas[E2] -->4<!-- /conta --> |
 | E3 — Páginas, compartilhamento e contato | T-15 a T-21 | <!-- conta:tarefas-concluidas[E3] -->0<!-- /conta --> | <!-- conta:tarefas-em-validacao[E3] -->0<!-- /conta --> | <!-- conta:tarefas[E3] -->7<!-- /conta --> |
 | E4 — Conteúdo real | T-22 a T-24 | <!-- conta:tarefas-concluidas[E4] -->0<!-- /conta --> | <!-- conta:tarefas-em-validacao[E4] -->0<!-- /conta --> | <!-- conta:tarefas[E4] -->3<!-- /conta --> |
@@ -65,7 +65,7 @@ O ✅ e o 🔎 de cada linha copiam o título da tarefa, que é a fonte; a cópi
 - [T-07 — Guardar o repositório contra dado sensível](#t-07) ✅
 - [T-08 — Ligar o kit de documentação](#t-08) ✅
 - [T-09 — Montar a estrutura de contexto do agente](#t-09) ✅
-- [T-10 — Publicar o repositório com as guardas do GitHub](#t-10)
+- [T-10 — Publicar o repositório com as guardas do GitHub](#t-10) 🔎
 
 **[Épico E2 — Nada vai ao ar errado](#e2)**
 
@@ -387,7 +387,7 @@ Entrega as camadas que conferem cada mudança — o portão de qualidade, as gua
 
 <a id="t-10"></a>
 
-### T-10 — Publicar o repositório com as guardas do GitHub
+### T-10 — Publicar o repositório com as guardas do GitHub 🔎 AGUARDA VALIDAÇÃO
 
 **Cumpre.** `REQ-31`
 
@@ -408,6 +408,8 @@ Entrega as camadas que conferem cada mudança — o portão de qualidade, as gua
 - [ ] Cada caso-limite provado no repositório
 - [ ] Linha correspondente em `04-rastreabilidade.md` preenchida
 - [ ] Validado pelo dono
+
+**Entregue até aqui.** Os dois workflows em `.github/workflows/` — `verify`, que roda `npm run verify`, e `dependency-review` — e o `.github/dependabot.yml`. O portão passou num clone raso, com HEAD destacado, sem identidade do `git` e com o cache do npm vazio, como no CI. Falta a parte da conta, pelo roteiro que a execução entrega: tornar o repositório público, ligar as guardas do GitHub e o ruleset. Depois vem a prova dos casos-limite no repositório público e a validação do dono. Três leituras do contrato. A primeira: o `CLAUDE.md` deixa a tarefa `plataforma` sem commit até a validação, mas esta só se valida no GitHub, e o contrato manda o primeiro PR. A segunda: o único check obrigatório do ruleset é o `verify`, como o contrato enumera, e a revisão de dependências reprova sem bloquear o merge. A terceira: a espera do Dependabot é de uma semana nos dois ecossistemas, e só as versões menores e de correção vão agrupadas, porque versão maior é tarefa própria (`R-03`). As actions estão fixadas na última versão que já tinha cumprido a mesma espera.
 
 [↑ Índice](#indice)
 
