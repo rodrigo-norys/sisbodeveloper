@@ -1,0 +1,11 @@
+name: prova-injecao-privilegiada
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  echo-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${{ github.event.comment.body }}"
