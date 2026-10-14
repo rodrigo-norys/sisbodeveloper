@@ -97,7 +97,7 @@ src/assets/       fontes e imagens versionadas; nunca imagem com metadado de aut
 public/           os arquivos servidos como estão
 tests/            os testes do portão de qualidade, em node:test, sobre o site gerado e o repositório
 .claude/          hooks e configuração do agente; o registro de carga fica fora do git
-.github/          o verificador de dado sensível e a regressão dele; o CI chega com a T-10
+.github/          o CI do portão e da revisão de dependências, o Dependabot, e o verificador de dado sensível com a regressão dele
 tools/            o motor do kit de documentação, cópia do metodo-sdd, e a configuração do projeto
 ```
 
