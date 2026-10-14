@@ -1,0 +1,13 @@
+name: prova-injecao
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  echo-title:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${{ github.event.pull_request.title }}"
