@@ -1,0 +1,50 @@
+---
+title: CronosComex
+description: An operations dashboard for customs clearance that reads and writes the spreadsheet the company already used, with no migration.
+lang: en
+translationKey: cronoscomex
+publishedAt: 2026-09-23
+problem: An entire operation lived in an Excel workbook synced over OneDrive, and replacing it with a system would mean interrupting the daily work of the people who depend on it.
+constraint: The spreadsheet outranks the specification. When the document and the file disagree, the file wins and the disagreement becomes a documented finding.
+proves: That engineering rigor can reach a process that runs on a file — no migration, no database, and no taking the tool away from the people using it.
+stack:
+  - TypeScript
+  - Fastify
+  - React
+  - Vite
+  - Tailwind
+  - Vitest
+status: delivered
+featured: true
+metrics:
+  - label: rows processed
+    value: "649"
+  - label: quarantined
+    value: "0"
+  - label: zip entries untouched
+    value: 28/30
+---
+
+DRAFT — skeleton text, written so the page compiles. Rewrite before publishing.
+
+## The problem
+
+Describe the starting state: the spreadsheet, who depends on it, and why the
+obvious answer — migrate to a system — was the wrong one.
+
+## The constraint that drove the design
+
+The file outranks the specification. That inverts the usual direction of the
+work: you do not fix the spreadsheet to fit the model, you fix the model to fit
+the spreadsheet, and every divergence becomes a record instead of a silent
+correction.
+
+## What was measured
+
+This section is what sets the case apart. Real numbers, the date each was
+measured, and what each one decided.
+
+## What I would do differently
+
+Technical honesty is worth more than a showcase. One decision that aged badly,
+and what you learned from it.

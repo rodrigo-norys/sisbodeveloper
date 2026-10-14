@@ -1,0 +1,53 @@
+---
+title: CronosComex
+description: Painel operacional de desembaraço aduaneiro que lê e escreve na planilha que a empresa já usava, sem migrar nada.
+lang: pt-br
+translationKey: cronoscomex
+publishedAt: 2026-09-23
+problem: Uma operação inteira vivia numa planilha de Excel sincronizada por OneDrive, e trocá-la por um sistema significaria interromper o trabalho de quem depende dela todo dia.
+constraint: A planilha é a referência prioritária, acima da especificação. Quando documento e arquivo divergem, o arquivo vence e a divergência vira achado documentado.
+proves: Que dá para levar rigor de engenharia a um processo que roda em arquivo, sem migração, sem banco e sem tirar a ferramenta das mãos de quem trabalha.
+stack:
+  - TypeScript
+  - Fastify
+  - React
+  - Vite
+  - Tailwind
+  - Vitest
+status: delivered
+featured: true
+metrics:
+  - label: linhas processadas
+    value: "649"
+  - label: em quarentena
+    value: "0"
+  - label: entradas do zip intactas
+    value: 28/30
+---
+
+RASCUNHO — texto de esqueleto, escrito para a página compilar. Reescreva antes
+de publicar.
+
+## O problema
+
+Descreva aqui o estado inicial: a planilha, quem depende dela, e por que a
+solução óbvia — migrar para um sistema — era a errada.
+
+## A restrição que dominou o desenho
+
+O arquivo vence a especificação. Isso inverte a direção normal do trabalho:
+não se corrige a planilha para caber no modelo, corrige-se o modelo para caber
+na planilha, e toda divergência vira registro em vez de correção silenciosa.
+
+## O que foi medido
+
+Esta seção é a que diferencia o case. Números reais, com a data da medição e o
+que cada um decidiu. Exemplos do que cabe aqui: quantas linhas a planilha tem,
+quantas caíram em quarentena, quantas entradas do arquivo mudam quando uma
+célula é editada, e o que isso provou sobre o isolamento das abas fora de
+escopo.
+
+## O que eu faria diferente
+
+Honestidade técnica vale mais que vitrine. Uma decisão que envelheceu mal e o
+que você aprendeu com ela.

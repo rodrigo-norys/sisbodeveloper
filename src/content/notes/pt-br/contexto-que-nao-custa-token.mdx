@@ -1,0 +1,42 @@
+---
+title: Contexto que não custa token
+description: A regra que carrega em toda sessão paga em toda sessão. A que carrega por gatilho só paga quando o assunto aparece.
+lang: pt-br
+translationKey: contexto-que-nao-custa-token
+publishedAt: 2026-09-23
+topics:
+  - engenharia de contexto
+  - agentes
+relatedProjects:
+  - cronoscomex
+metrics:
+  - label: regras com gatilho
+    value: "6"
+  - label: sessões medidas
+    value: "28"
+  - label: disparos observados
+    value: "45"
+---
+
+RASCUNHO — esqueleto de nota, para a página compilar e mostrar a forma.
+Reescreva com o que você realmente concluiu.
+
+## A observação
+
+Um arquivo de instruções carregado em toda sessão cobra o preço dele em toda
+sessão, inclusive nas que não tocam no assunto que ele trata. O custo não
+aparece: nenhuma sessão falha por causa dele, elas só ficam mais caras e mais
+diluídas.
+
+## A estrutura que saiu disso
+
+Instrução com gatilho de caminho: ela entra em contexto quando o agente lê um
+arquivo que casa o padrão, e não entra nas outras vezes. O que era regra global
+vira regra local, e o arquivo global encolhe para o que é mesmo global.
+
+## O que isso custa
+
+Gatilho é contexto, não configuração aplicada. Ele carrega quando o arquivo é
+lido — e criar arquivo novo não conta como leitura. Quem depende do gatilho
+para uma regra que não pode falhar está apoiado na coisa errada: essa regra
+pertence ao arquivo que sempre carrega, ou a um teste que reprova.
