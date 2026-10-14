@@ -176,7 +176,7 @@ check_recursive_remove() {
     while [ -n "$path" ]; do
       segment="${path##*/}"
       case "$segment" in
-        src|public|docs|.vscode|.claude|.git)
+        src|public|docs|tests|tools|.github|.vscode|.claude|.git)
           block "remocao recursiva em diretorio versionavel do projeto: $argument" ;;
       esac
       case "$path" in

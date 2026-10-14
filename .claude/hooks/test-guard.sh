@@ -202,7 +202,7 @@ blocks 'echo x > .claude/settings.json' CLAUDE_PROJECT_DIR=
 blocks 'echo x > /home/dev/.claude/planejamento-sisbodeveloper/x.json' CLAUDE_PROJECT_DIR=
 blocks 'echo x > $CLAUDE_PROJECT_DIR/.claude/settings.json' CLAUDE_PROJECT_DIR=
 allows 'echo x > /tmp/saida.txt' CLAUDE_PROJECT_DIR=
-allows 'PERFIL_RASCUNHO=1 npm run build 2>&1 | tail -20' CLAUDE_PROJECT_DIR=
+allows 'ALLOW_PLACEHOLDER_TEXT=1 npm run build 2>&1 | tail -20' CLAUDE_PROJECT_DIR=
 
 # Barra final na raiz e no HOME.
 blocks 'echo x > /home/dev/site/.claude/settings.json' CLAUDE_PROJECT_DIR=/home/dev/site/
@@ -259,9 +259,13 @@ blocks 'rm src -rf'
 # Todo diretorio da lista NU, que e o caso mais destrutivo: sem barra final.
 blocks 'rm -rf public'
 blocks 'rm -rf docs'
+blocks 'rm -rf tests'
+blocks 'rm -rf tools'
+blocks 'rm -rf .github'
 blocks 'rm -rf .vscode'
 blocks 'rm -rf .claude'
 blocks 'rm -rf .git'
+blocks 'rm -r tests/lint'
 
 # Grafias do caminho: barra, ./, aspas, subdiretorio, absoluto, variavel.
 blocks 'rm -rf src/'
@@ -309,7 +313,8 @@ allows 'rm -rf mydocs'
 allows 'rm -rf websrc'
 allows 'rm -rf src-old'
 allows 'rm -rf public_html'
-allows 'rm -rf .github'
+allows 'rm -rf tests-old'
+allows 'rm -rf .github-backup'
 allows 'rm -rf /tmp/mydocs'
 
 # Sem recursao. `rm CLAUDE.md` e o passo do plano que desfaz o link simbolico.
@@ -375,8 +380,8 @@ allows "/usr/bin/grep -o '<link rel=\"alternate\"[^>]*>' dist/pt-br/index.html |
 # --- comandos da sessao de planejamento ------------------------------------
 allows 'git rev-parse HEAD'
 allows 'npm run build'
-allows 'PERFIL_RASCUNHO=1 npm run build'
-allows 'PERFIL_RASCUNHO=1 npm run build 2>&1 | tail -20'
+allows 'ALLOW_PLACEHOLDER_TEXT=1 npm run build'
+allows 'ALLOW_PLACEHOLDER_TEXT=1 npm run build 2>&1 | tail -20'
 allows "find dist -name '*.html' | sort"
 allows "/usr/bin/grep -n 'const [A-Z_]* = [0-9]' dist/pt-br/index.html"
 allows "/usr/bin/grep -n '⟨' docs/*.md docs/adr/*.md CLAUDE.md"
@@ -399,7 +404,7 @@ allows 'astro dev logs > /tmp/astro.log 2>&1'
 # --- comandos da execucao --------------------------------------------------
 allows 'npm install astro-icon@1.1.5'
 allows 'npm install -D @astrojs/sitemap@3.2.1 && git add package.json package-lock.json'
-allows 'rm -rf dist .astro && PERFIL_RASCUNHO=1 npm run build 2>&1 | tail -20'
+allows 'rm -rf dist .astro && ALLOW_PLACEHOLDER_TEXT=1 npm run build 2>&1 | tail -20'
 allows 'rm -rf dist .astro node_modules && npm install'
 allows 'npx playwright screenshot http://localhost:4321/pt-br/ /tmp/x.png'
 allows 'npm run dev & sleep 3 && curl -s localhost:4321 | head -5'

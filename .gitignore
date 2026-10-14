@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# registro de carga do agente, da máquina de quem trabalha (REQ-30)
+.claude/local/
