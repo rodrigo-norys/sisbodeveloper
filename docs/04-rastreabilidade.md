@@ -40,8 +40,8 @@
 | `REQ-27` | `T-02` | `npm run check:types` (`astro check --minimumFailingSeverity hint`) | verificado |
 | `REQ-28` | `T-07` | `.github/scripts/test-verifica-dados-sensiveis.sh` (a regressão); `.github/scripts/verifica-dados-sensiveis.sh` sobre o repositório e o site gerado, no `npm run verify` | verificado |
 | `REQ-29` | `T-08` | `tests/documentation.test.mjs`::REQ-29: as regiões, os espelhos e as tabelas da documentação batem com a fonte; ::REQ-29: o índice e o resumo do 03 batem com os blocos das tarefas | verificado |
-| `REQ-30` | `T-09` | ⟨…⟩ | aberto |
-| `REQ-31` | `T-04` | as execuções da `/sugerir-commits` e da `/sugerir-prs` registradas na `T-04`, com os casos-limite que faltam | aberto |
+| `REQ-30` | `T-09` | `tests/contexto-cita-pecas.test.mjs`::REQ-30: cada peça está citada, no formato em que se cita; ::REQ-30: o registro de carga fica fora do git; `tests/regras-citam-guarda.test.mjs`::REQ-30: o cabeçalho de cada regra nomeia uma guarda, e cada caminho nomeado existe | verificado |
+| `REQ-31` | `T-04` | as execuções da `/sugerir-commits` e da `/sugerir-prs` registradas na `T-04`, cada caso-limite numa execução da skill | verificado |
 | `REQ-31` | `T-10` | ⟨…⟩ | aberto |
 | `REQ-32` | `T-28` | ⟨…⟩ | aberto |
 | `REQ-33` | `T-02` | `tests/package.test.mjs`::toda dependência tem versão exata; ::o Node em uso é o do .node-version | verificado |
@@ -81,7 +81,7 @@ A última coluna se lê contra o **gatilho de reavaliação** que cada ADR decla
 
 ⟨Preencha ao fechar cada épico.⟩
 
-- Requisitos obrigatórios: <!-- conta:requisitos-verificados[obrigatório] -->9<!-- /conta --> de <!-- conta:requisitos[obrigatório] -->33<!-- /conta --> verificados
+- Requisitos obrigatórios: <!-- conta:requisitos-verificados[obrigatório] -->11<!-- /conta --> de <!-- conta:requisitos[obrigatório] -->33<!-- /conta --> verificados
 - Requisitos sem tarefa: <!-- conta:requisitos-sem-tarefa -->nenhum<!-- /conta -->
 - Testes sem requisito: ⟨lista, ou "nenhum"⟩
 - ADRs com gatilho de reavaliação atingido: ⟨lista, ou "nenhuma"⟩
